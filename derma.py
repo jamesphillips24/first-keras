@@ -20,6 +20,7 @@ for f in image_files:
   if exists.size > 0 and pd.notna(exists[0]):
     images.append(os.path.join("train", f))
     labels.append(key.index(exists[0]))
+  
 for f in test_image_files:
   exists = test_data[test_data['isic_id'] == f[:-4]]['benign_malignant'].values
   if exists.size > 0 and pd.notna(exists[0]):
@@ -42,27 +43,23 @@ test_dataset = test_dataset.map(load_and_preprocess_image)
 test_dataset = test_dataset.shuffle(buffer_size=len(test_images)).batch(64).prefetch(tf.data.AUTOTUNE)
 
 #prediction, l = load_and_preprocess_image('S_0418_Benign_mole_M2200096.width-320.jpg',1)
-model = keras.models.load_model('my_model.keras')
-test_loss, test_acc = model.evaluate(test_dataset)
-print(test_acc)
-
+#model = keras.models.load_model('my_model.keras')
+#test_loss, test_acc = model.evaluate(test_dataset)
+#print(test_acc)
 #result = model.predict(prediction)
 #print(result)
 
 
-"""class_weights = class_weight.compute_class_weight('balanced',
+class_weights = class_weight.compute_class_weight('balanced',
                                                   classes=np.unique(labels),
                                                   y=labels)
-
 class_weights_dict = dict(enumerate(class_weights))
 
 base_model = keras.applications.Xception(
     weights='imagenet',
     input_shape=(224, 224, 3),
     include_top=False)
-
 base_model.trainable = False
-
 model = keras.Sequential()
 model.add(base_model)
 model.add(keras.layers.GlobalAveragePooling2D())
